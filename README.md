@@ -234,9 +234,13 @@ If you use [Claude Code](https://claude.com/claude-code), `skills/ripple-jobs/SK
 the setup steps, commands, and troubleshooting from this README into an installable skill, so you
 can just say "run my job search" or "check my Notion job queue" instead of pasting commands.
 
-Install it by copying the directory into your personal skills folder:
+Install it:
 
 ```bash
+# Recommended
+npx skills add devPinheiro/ripple-jobs -g -a claude-code
+
+# Manual
 mkdir -p ~/.claude/skills/ripple-jobs
 cp skills/ripple-jobs/SKILL.md ~/.claude/skills/ripple-jobs/SKILL.md
 ```
