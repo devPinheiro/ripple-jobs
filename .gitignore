@@ -1,0 +1,9 @@
+.venv/
+__pycache__/
+*.pyc
+
+.env
+
+# Personal data — real profile and dedup state. Only the .example template ships.
+data/profile.json
+data/seen.json

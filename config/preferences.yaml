@@ -1,0 +1,33 @@
+# Things a resume can't tell us — edit these before the first run.
+
+target_titles:
+  - "Frontend Engineer"
+  - "Senior Frontend Engineer"
+  - "React Engineer"
+  - "Frontend Developer"
+
+seniority: "Senior"
+
+# Used to detect sponsorship signals in job descriptions. Add/remove phrases as you see false positives/negatives.
+visa_sponsorship_required: true
+visa_positive_phrases:
+  - "visa sponsorship"
+  - "will sponsor"
+  - "sponsorship available"
+  - "h1b sponsorship"
+  - "we sponsor"
+visa_negative_phrases:
+  - "no sponsorship"
+  - "not able to sponsor"
+  - "must be authorized to work"
+  - "unable to sponsor"
+
+remote_only: true
+
+# Company slugs for direct ATS boards (Greenhouse/Lever/Ashby). Empty for now — add as you find companies you want tracked.
+ats_boards:
+  greenhouse: []
+  lever: []
+  ashby: []
+
+min_score_to_queue: 60

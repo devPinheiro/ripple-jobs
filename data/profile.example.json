@@ -1,0 +1,28 @@
+{
+  "name": "Jane Doe",
+  "title": "Senior Frontend Engineer",
+  "years_experience": 8,
+  "email": "jane@example.com",
+  "links": {
+    "linkedin": "https://linkedin.com/in/janedoe",
+    "github": "https://github.com/janedoe",
+    "website": null
+  },
+  "skills": [
+    "React", "TypeScript", "Next.js", "Redux", "GraphQL", "Node.js",
+    "TailwindCSS", "Jest", "Cypress"
+  ],
+  "experience": [
+    {
+      "company": "Example Corp",
+      "title": "Senior Frontend Engineer",
+      "start": "Jan 2023",
+      "end": "Present",
+      "highlights": [
+        "Led migration to a new component architecture, cutting build times by 30%",
+        "Mentored two junior engineers and ran the frontend guild's code review process"
+      ]
+    }
+  ],
+  "education": ["State University — BSc. Computer Science"]
+}

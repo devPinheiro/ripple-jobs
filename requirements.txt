@@ -1,0 +1,7 @@
+requests
+feedparser
+pdfplumber
+anthropic
+notion-client
+python-dotenv
+pyyaml
