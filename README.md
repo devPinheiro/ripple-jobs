@@ -228,6 +228,22 @@ it already handles the double-encoding some ATS platforms use (see `ats_boards.p
 `src/drafter.py:DRAFT_PROMPT` is a single template string. Edit it directly to change tone, length,
 or structure of the generated cover letter/highlights — there's no abstraction layer to fight.
 
+## Claude Code skill
+
+If you use [Claude Code](https://claude.com/claude-code), `skills/ripple-jobs/SKILL.md` packages
+the setup steps, commands, and troubleshooting from this README into an installable skill, so you
+can just say "run my job search" or "check my Notion job queue" instead of pasting commands.
+
+Install it by copying the directory into your personal skills folder:
+
+```bash
+mkdir -p ~/.claude/skills/ripple-jobs
+cp skills/ripple-jobs/SKILL.md ~/.claude/skills/ripple-jobs/SKILL.md
+```
+
+The skill is scoped to the tool's boundaries — it explicitly refuses to improvise auto-apply or
+LinkedIn/Wellfound automation even if asked, since that's a deliberate non-goal of this project.
+
 ## Troubleshooting
 
 **`Could not find page with ID: ...` from `setup-notion`** — the integration hasn't been connected
