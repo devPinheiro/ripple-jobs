@@ -57,6 +57,7 @@ def run():
     profile = load_profile()
     prefs = load_prefs()
     seen = load_seen()
+    data_source_id = notion_sync.resolve_data_source_id(notion_token, notion_db)
 
     jobs = fetch_all(prefs)
     print(f"Fetched {len(jobs)} jobs across all sources")
@@ -73,7 +74,7 @@ def run():
             continue
         try:
             job_draft = drafter.draft(job, profile, api_key)
-            notion_sync.push_job(notion_token, notion_db, job, score, job_draft, date.today().isoformat())
+            notion_sync.push_job(notion_token, data_source_id, job, score, job_draft, date.today().isoformat())
             queued += 1
             print(f"Queued [{score}] {job['title']} @ {job['company']} ({job['source']})")
         except Exception as e:

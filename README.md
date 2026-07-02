@@ -253,6 +253,13 @@ LinkedIn/Wellfound automation even if asked, since that's a deliberate non-goal 
 **`Could not find page with ID: ...` from `setup-notion`** — the integration hasn't been connected
 to that page. Open the page in Notion → "···" → Connections → add your integration, then retry.
 
+**Database gets created but has no columns except "Name"** — this means your `notion-client`
+version predates the fix for Notion's multi-source-database API (2025-09-03+): databases no longer
+accept top-level `properties` on creation, columns live on a `data_source`, and pages are created
+under a `data_source_id`, not a `database_id`. Make sure `notion-client>=3.0.0` is installed
+(`pip install -U notion-client`) — `src/notion_sync.py` targets this newer shape via
+`initial_data_source` and `resolve_data_source_id`.
+
 **Notion rows look empty in some columns** — `push_job` truncates long text fields at 2000
 characters (Notion's rich_text limit per block). The full description/cover letter length is capped
 before drafting (`drafter.py` truncates job descriptions at 4000 chars going into the prompt).

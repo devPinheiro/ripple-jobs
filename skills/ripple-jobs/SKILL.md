@@ -54,6 +54,9 @@ Catching those two upfront is faster than diagnosing a bad run after the fact.
 - **`Could not find page with ID: ...`** (from `setup-notion`) — the Notion integration isn't
   connected to that page. In Notion: open the page → "···" → Connections → add the integration.
   A correct page ID doesn't matter if the page isn't shared with the integration.
+- **Database created but only has a "Name" column** — `notion-client` is older than 3.0.0 and
+  doesn't default to Notion's multi-source-database API; run `pip install -U notion-client` inside
+  the venv, archive the broken database in Notion, and re-run `setup-notion`.
 - **Scores all cluster low** — `data/profile.json` is likely missing, empty, or was accidentally
   left as `profile.example.json`'s placeholder content. Re-run `extract-profile`.
 - **A source returns nothing** — `pipeline.fetch_all()` catches and logs per-source errors rather
