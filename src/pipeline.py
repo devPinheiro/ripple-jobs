@@ -51,8 +51,10 @@ def run():
     api_key = os.environ.get("ANTHROPIC_API_KEY")
     notion_token = os.environ.get("NOTION_TOKEN")
     notion_db = os.environ.get("NOTION_DATABASE_ID")
-    if not all([api_key, notion_token, notion_db]):
-        raise SystemExit("Missing ANTHROPIC_API_KEY, NOTION_TOKEN, or NOTION_DATABASE_ID in environment/.env")
+    if not all([notion_token, notion_db]):
+        raise SystemExit("Missing NOTION_TOKEN or NOTION_DATABASE_ID in environment/.env")
+    if not api_key:
+        print("ANTHROPIC_API_KEY not set — queuing jobs with blank cover letters/resume highlights.")
 
     profile = load_profile()
     prefs = load_prefs()
@@ -69,16 +71,20 @@ def run():
     queued = 0
     for job in new_jobs:
         score, breakdown = scorer.score_job(job, profile, prefs)
-        seen.add(job["id"])
         if score < min_score:
+            seen.add(job["id"])
             continue
         try:
-            job_draft = drafter.draft(job, profile, api_key)
+            if api_key:
+                job_draft = drafter.draft(job, profile, api_key)
+            else:
+                job_draft = {"cover_letter": "", "resume_highlights": []}
             notion_sync.push_job(notion_token, data_source_id, job, score, job_draft, date.today().isoformat())
+            seen.add(job["id"])
             queued += 1
             print(f"Queued [{score}] {job['title']} @ {job['company']} ({job['source']})")
         except Exception as e:
-            print(f"Failed to draft/push {job['title']} @ {job['company']}: {e}")
+            print(f"Failed to draft/push {job['title']} @ {job['company']}: {e} (will retry next run)")
 
     save_seen(seen)
     print(f"Done. {queued} jobs queued to Notion.")

@@ -9,6 +9,12 @@ can target it.
 """
 from notion_client import Client
 
+# Notion's rich_text limit is 2000 chars counted as UTF-16 code units, but Python
+# len()/slicing counts Unicode code points — a single astral character (e.g. some
+# emoji) counts as 1 code point but 2 UTF-16 units, so a naive [:2000] slice can
+# still land over the limit. Truncate with margin instead of matching exactly.
+TEXT_LIMIT = 1900
+
 DATABASE_PROPERTIES = {
     "Role": {"title": {}},
     "Company": {"rich_text": {}},
@@ -60,10 +66,10 @@ def push_job(token, data_source_id, job, score, draft, date_added):
             "Status": {"select": {"name": "Queued"}},
             "Source": {"rich_text": [{"text": {"content": job["source"]}}]},
             "Apply Link": {"url": job["url"]},
-            "JD Summary": {"rich_text": [{"text": {"content": job.get("description", "")[:2000]}}]},
-            "Cover Letter": {"rich_text": [{"text": {"content": draft["cover_letter"][:2000]}}]},
+            "JD Summary": {"rich_text": [{"text": {"content": job.get("description", "")[:TEXT_LIMIT]}}]},
+            "Cover Letter": {"rich_text": [{"text": {"content": draft["cover_letter"][:TEXT_LIMIT]}}]},
             "Resume Highlights": {
-                "rich_text": [{"text": {"content": "\n".join(draft["resume_highlights"])[:2000]}}]
+                "rich_text": [{"text": {"content": "\n".join(draft["resume_highlights"])[:TEXT_LIMIT]}}]
             },
             "Date Added": {"date": {"start": date_added}},
         },
