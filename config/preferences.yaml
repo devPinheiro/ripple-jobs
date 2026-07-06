@@ -24,10 +24,13 @@ visa_negative_phrases:
 
 remote_only: true
 
-# Company slugs for direct ATS boards (Greenhouse/Lever/Ashby). Empty for now — add as you find companies you want tracked.
+# Company slugs for direct ATS boards. Empty for now — add as you find companies you want tracked.
 ats_boards:
   greenhouse: []
   lever: []
   ashby: []
+  workable: []
+  recruitee: []
+  teamtailor: []
 
 min_score_to_queue: 60

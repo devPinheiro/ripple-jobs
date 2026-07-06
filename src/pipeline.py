@@ -6,7 +6,7 @@ from datetime import date
 import yaml
 
 from src import scorer, drafter, notion_sync
-from src.sources import remotive, wwr, remoteok, ats_boards
+from src.sources import remotive, wwr, remoteok, jobicy, himalayas, themuse, ats_boards
 
 BASE_DIR = os.path.join(os.path.dirname(__file__), "..")
 PROFILE_PATH = os.path.join(BASE_DIR, "data", "profile.json")
@@ -36,9 +36,19 @@ def save_seen(seen_ids):
         json.dump(sorted(seen_ids), f, indent=2)
 
 
+AGGREGATORS = [
+    (remotive.fetch, "remotive"),
+    (wwr.fetch, "weworkremotely"),
+    (remoteok.fetch, "remoteok"),
+    (jobicy.fetch, "jobicy"),
+    (himalayas.fetch, "himalayas"),
+    (themuse.fetch, "themuse"),
+]
+
+
 def fetch_all(prefs):
     jobs = []
-    for fetcher, label in [(remotive.fetch, "remotive"), (wwr.fetch, "weworkremotely"), (remoteok.fetch, "remoteok")]:
+    for fetcher, label in AGGREGATORS:
         try:
             jobs.extend(fetcher())
         except Exception as e:

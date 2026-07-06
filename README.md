@@ -64,12 +64,22 @@ main.py                            # CLI: extract-profile | setup-notion | run
 | Remotive | Public JSON API | The API's `search` param doesn't actually filter server-side (verified by testing) — we pull the whole `software-dev` category and let the scorer do the filtering. |
 | WeWorkRemotely | Public RSS feed | Descriptions arrive as raw HTML; stripped via `text_utils.strip_html`. |
 | RemoteOK | Public JSON API | Filtered client-side to tags like `frontend`/`react`/`typescript`/`vue`/`javascript`. |
-| Greenhouse / Lever / Ashby | Public per-company job-board JSON APIs | Opt-in per company slug in `config/preferences.yaml`. These endpoints exist specifically so companies can embed their listings elsewhere — using them isn't scraping in any meaningful sense. |
+| Jobicy | Public JSON API | Remote-only, cross-industry. ToS asks for hourly-or-less polling and forbids redistributing to competing aggregators — fine for this tool's private use. |
+| Himalayas | Public JSON API | Remote-only. Uses the `/jobs/api/search` endpoint, not `/jobs/api` — the latter silently ignores the `q` filter and returns unfiltered results (verified by testing). |
+| The Muse | Public JSON API | No key needed for basic use (500 req/hr); a free key raises that to 3,600/hr. Global, tech-leaning. |
+| Greenhouse / Lever / Ashby / Workable / Recruitee / Teamtailor | Public per-company job-board JSON APIs | Opt-in per company slug in `config/preferences.yaml`. These endpoints exist specifically so companies can embed their listings elsewhere — using them isn't scraping in any meaningful sense. |
 | ~~LinkedIn~~ | — | Automated interaction with LinkedIn (scraping search results or auto-applying) violates their ToS and risks account restriction/ban. Not implemented, and not planned. |
 | ~~Wellfound~~ | — | Wellfound (formerly AngelList Talent) deprecated its public jobs API years ago. The only way to pull listings now is scraping the logged-in search UI — same risk profile as LinkedIn. Not implemented. |
 
 If you want LinkedIn/Wellfound listings, the intended workflow is manual: copy a posting URL into
 Notion yourself and treat it like any other row. This tool intentionally does not automate that.
+
+Also evaluated and skipped: Indeed and GitHub Jobs (both discontinued their public APIs), USAJobs
+(restrictive ToS on derivative use, and narrow scope), JSearch/RapidAPI (a paid wrapper around
+scraped LinkedIn/Indeed/Glassdoor data — conflicts with this project's own ToS principle), Adzuna/
+Findwork.dev/CareerJet (unresolved free-tier/approval status), Working Nomads (undocumented,
+unsupported endpoint), and Personio (its XML feed has no job URL field, and the common
+`/job/{id}` URL pattern didn't resolve to a real posting in testing).
 
 ## Setup
 
@@ -143,11 +153,15 @@ ats_boards:
   greenhouse: ["airbnb"]   # add company slugs from their public job board URLs
   lever: []
   ashby: []
+  workable: []
+  recruitee: []
+  teamtailor: []
 min_score_to_queue: 60
 ```
 
 Company slugs are the identifier in the company's public board URL:
-`boards.greenhouse.io/<slug>`, `jobs.lever.co/<slug>`, `jobs.ashbyhq.com/<slug>`.
+`boards.greenhouse.io/<slug>`, `jobs.lever.co/<slug>`, `jobs.ashbyhq.com/<slug>`,
+`apply.workable.com/<slug>`, `<slug>.recruitee.com`, `<slug>.teamtailor.com`.
 
 ## Usage
 
