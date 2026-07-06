@@ -53,8 +53,11 @@ src/
     remotive.py                # public API
     wwr.py                      # WeWorkRemotely public RSS
     remoteok.py                  # public API
-    ats_boards.py                 # Greenhouse/Lever/Ashby by company slug
-main.py                            # CLI: extract-profile | setup-notion | run
+    jobicy.py                     # public API
+    himalayas.py                   # public API
+    themuse.py                      # public API
+    ats_boards.py                    # Greenhouse/Lever/Ashby/Workable/Recruitee/Teamtailor by company slug
+main.py                                # CLI: extract-profile | setup-notion | run
 ```
 
 ## Job sources — and why LinkedIn/Wellfound aren't in the list
@@ -93,7 +96,7 @@ pip install -r requirements.txt
 cp .env.example .env
 ```
 
-### 2. Anthropic API key
+### 2. Anthropic API key (optional, but recommended)
 
 Get one from https://console.anthropic.com and put it in `.env`:
 
@@ -101,7 +104,11 @@ Get one from https://console.anthropic.com and put it in `.env`:
 ANTHROPIC_API_KEY=sk-ant-...
 ```
 
-This powers both profile extraction (one-time, per resume) and per-job drafting (each run).
+This powers both profile extraction (one-time, per resume) and per-job drafting (each run). Without
+it, `extract-profile` won't work (you'd need to hand-write `data/profile.json` against the shape in
+`profile.example.json`), and `run` still works but queues jobs with blank Cover Letter/Resume
+Highlights columns for you to fill in yourself — useful if you want to try the fetch/score/Notion
+flow before deciding to add drafting.
 
 ### 3. Build your profile
 
@@ -175,9 +182,12 @@ Each run:
 1. Fetches every configured source.
 2. Drops anything already in `data/seen.json` (so re-runs don't re-process old listings).
 3. Scores everything new against `data/profile.json` + `config/preferences.yaml`.
-4. For anything scoring ≥ `min_score_to_queue`, drafts a cover letter and resume highlights, then
-   creates a Notion row with status **Queued**.
-5. Writes the updated seen-set back to disk.
+4. For anything scoring ≥ `min_score_to_queue`, drafts a cover letter and resume highlights (or
+   leaves those fields blank if `ANTHROPIC_API_KEY` isn't set), then creates a Notion row with
+   status **Queued**.
+5. Writes the updated seen-set back to disk. Only successes (and genuine below-threshold skips) get
+   marked seen — a job that fails to draft/push (e.g. a transient API error) is retried on the next
+   run instead of being silently dropped.
 
 Run it daily via cron or `launchd` to keep the board fresh without re-reviewing old listings:
 
@@ -274,8 +284,11 @@ under a `data_source_id`, not a `database_id`. Make sure `notion-client>=3.0.0` 
 (`pip install -U notion-client`) — `src/notion_sync.py` targets this newer shape via
 `initial_data_source` and `resolve_data_source_id`.
 
-**Notion rows look empty in some columns** — `push_job` truncates long text fields at 2000
-characters (Notion's rich_text limit per block). The full description/cover letter length is capped
+**Notion rows look empty in some columns** — `push_job` truncates long text fields at 1900
+characters. Notion's actual rich_text limit is 2000, but it's counted in UTF-16 code units while
+Python slicing counts code points, so a field with certain characters (e.g. some emoji) could pass
+a naive `[:2000]` slice while still exceeding Notion's real limit — 1900 leaves margin (see
+`src/notion_sync.py:TEXT_LIMIT`). The full description/cover letter length is separately capped
 before drafting (`drafter.py` truncates job descriptions at 4000 chars going into the prompt).
 
 **A job source returns nothing / errors** — `pipeline.fetch_all()` catches per-source exceptions and

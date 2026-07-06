@@ -26,11 +26,14 @@ def _visa_score(job_text, prefs):
     return 10  # unmentioned — plenty of sponsoring companies don't say so explicitly
 
 
+REMOTE_ONLY_SOURCES = ("remotive", "weworkremotely", "remoteok", "jobicy", "himalayas")
+
+
 def _remote_score(job, prefs):
     if not prefs.get("remote_only"):
         return 10
     location = job.get("location", "").lower()
-    return 10 if "remote" in location or job["source"] in ("remotive", "weworkremotely", "remoteok") else 0
+    return 10 if "remote" in location or job["source"] in REMOTE_ONLY_SOURCES else 0
 
 
 def _title_score(job_text, target_titles):
